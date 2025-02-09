@@ -1,0 +1,39 @@
+#cloud-config
+write_files:
+  - path: /tmp/lvm_setup.sh
+    content: |
+      #!/bin/bash
+      # Script para configurar LVM e sistemas de arquivos
+
+      # Esperar o disco ser reconhecido
+      sleep 30
+
+      # Criar volumes LVM no disco adicional
+      pvcreate /dev/sdb  # Altere para o disco correto se necessário
+      vgcreate vg0 /dev/sdb
+      lvcreate -L 10G -n var vg0
+      lvcreate -L 5G -n log vg0
+      lvcreate -L 5G -n home vg0
+      lvcreate -L 5G -n tmp vg0
+
+      # Criar sistemas de arquivos
+      mkfs.ext4 /dev/vg0/var
+      mkfs.ext4 /dev/vg0/log
+      mkfs.ext4 /dev/vg0/home
+      mkfs.ext4 /dev/vg0/tmp
+
+      # Montar os sistemas de arquivos
+      mkdir -p /var /log /home /tmp
+      mount /dev/vg0/var /var
+      mount /dev/vg0/log /log
+      mount /dev/vg0/home /home
+      mount /dev/vg0/tmp /tmp
+
+      # Adicionar ao fstab para montagem automática
+      echo "/dev/vg0/var /var ext4 defaults 0 0" >> /etc/fstab
+      echo "/dev/vg0/log /log ext4 defaults 0 0" >> /etc/fstab
+      echo "/dev/vg0/home /home ext4 defaults 0 0" >> /etc/fstab
+      echo "/dev/vg0/tmp /tmp ext4 defaults 0 0" >> /etc/fstab
+
+runcmd:
+  - [ bash, /tmp/lvm_setup.sh ]

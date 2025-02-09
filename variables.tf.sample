@@ -1,0 +1,11 @@
+
+variable "subscription_id" { 
+    description = "Your Subscription ID Here" 
+    type = string
+}
+
+variable "public_key" { 
+    description = "~/.ssh/YOUR SSH PUB KEY.pub" 
+    type = string 
+}
+
