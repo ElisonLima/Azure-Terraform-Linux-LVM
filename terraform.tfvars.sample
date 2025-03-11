@@ -1,0 +1,2 @@
+subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" #Ex: b1b1b111-b11b-1bbb-bb11-b111111bb11b
+public_key = "<YOUR_PUB_KEY_PATH>" #Ex: ~/.ssh/pubkey_file.pub

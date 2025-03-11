@@ -1,11 +1,11 @@
 
 variable "subscription_id" { 
-    description = "Your Subscription ID Here" 
+    description = "Your_Subscription_ID_Here" 
     type = string
 }
 
 variable "public_key" { 
-    description = "~/.ssh/YOUR SSH PUB KEY.pub" 
+    description = "~/.ssh/YOUR_SSH_PUB_KEY.pub" 
     type = string 
 }
 

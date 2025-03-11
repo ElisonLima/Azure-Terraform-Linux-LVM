@@ -1,9 +1,3 @@
-provider "azurerm" {
-  features {}
-  subscription_id = var.subscription_id
-}
-
-
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
   location = "East US"
@@ -77,7 +71,7 @@ resource "azurerm_linux_virtual_machine" "example" {
 
   admin_ssh_key { 
     username = "azureuser" 
-    public_key = var.public_key 
+    public_key = file(var.public_key) 
   }
 
   os_disk {
@@ -93,8 +87,7 @@ resource "azurerm_linux_virtual_machine" "example" {
     version   = "latest"
   }
 
-    custom_data = <<-EOT
-                #cloud-config
+    custom_data = base64encode(<<-EOT
                 runcmd:
                   - "sudo bash -c 'pvcreate /dev/sda'"
                   - "sudo vgcreate vg00 /dev/sda"
@@ -112,8 +105,6 @@ resource "azurerm_linux_virtual_machine" "example" {
                   - "sudo mount /dev/vg00/lv_root /mnt/home"
                   - "sudo mount /dev/vg00/lv_root /mnt/tmp"
                 EOT
-
-  
-
+                )
 
 }
