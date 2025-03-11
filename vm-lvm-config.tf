@@ -73,15 +73,12 @@ resource "azurerm_linux_virtual_machine" "example" {
   location            = azurerm_resource_group.example.location
   size                = "Standard_B1ms"
   admin_username      = "azureuser"
+  network_interface_ids = [azurerm_network_interface.example.id]
 
   admin_ssh_key { 
     username = "azureuser" 
     public_key = var.public_key 
   }
-
-
-
-  network_interface_ids = [azurerm_network_interface.example.id]
 
   os_disk {
     caching      = "ReadWrite"
@@ -96,6 +93,27 @@ resource "azurerm_linux_virtual_machine" "example" {
     version   = "latest"
   }
 
-  custom_data = base64encode(file("cloud-init.txt"))
+    custom_data = <<-EOT
+                #cloud-config
+                runcmd:
+                  - "sudo bash -c 'pvcreate /dev/sda'"
+                  - "sudo vgcreate vg00 /dev/sda"
+                  - "sudo lvcreate -n lv_root -L 5G vg00"
+                  - "sudo mkfs.ext4 /dev/vg00/lv_root"
+                  - "sudo mount /dev/vg00/lv_root /mnt"
+                  - "sudo mkdir /mnt/boot"
+                  - "sudo mkdir /mnt/var"
+                  - "sudo mkdir /mnt/log"
+                  - "sudo mkdir /mnt/home"
+                  - "sudo mkdir /mnt/tmp"
+                  - "sudo mount /dev/vg00/lv_root /mnt/boot"
+                  - "sudo mount /dev/vg00/lv_root /mnt/var"
+                  - "sudo mount /dev/vg00/lv_root /mnt/log"
+                  - "sudo mount /dev/vg00/lv_root /mnt/home"
+                  - "sudo mount /dev/vg00/lv_root /mnt/tmp"
+                EOT
+
+  
+
 
 }
